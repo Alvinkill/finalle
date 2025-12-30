@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - Gift Shaka Global Garri Concepts</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body class="login">
+    <header>
+        <h1>Gift Shaka Global Garri Concepts</h1>
+        <h1>Garri Factory</h1>
+        <div class="hamburger" onclick="toggleMenu()">
+            <div></div>
+            <div></div>
+            <div></div>
+        </div>
+        <nav>
+            <div class="nav-links" id="nav-links">
+                <a href="index.html">Home</a>
+                <a href="menu.html">Product</a>
+                <a href="process.html">Process</a>
+                <a href="about.html">About Us</a>
+                <a href="location.html">Location</a>
+                <a href="contact.html">Contact</a>
+                <a href="activities.html">Daily Activities</a>
+                <a href="login.html">Login</a>
+            </div>
+        </nav>
+    </header>
+    <main>
+        <div class="login-container">
+            <div class="login-header">
+                <h2>🌱 Welcome Back</h2>
+                <p>Login to access your account</p>
+            </div>
+            <div class="login-options">
+                <button id="customer-login-btn" class="option-btn active">👤 Customer Login</button>
+                <button id="customer-signup-btn" class="option-btn">📝 Customer Sign Up</button>
+                <button id="staff-login-btn" class="option-btn">👷 Staff/Admin</button>
+            </div>
+            <form id="login-form">
+                <div class="form-group">
+                    <label for="username">👤 Username</label>
+                    <input type="text" id="username" name="username" required placeholder="Enter your username">
+                </div>
+                
+                <div class="form-group">
+                    <label for="password">🔒 Password</label>
+                    <input type="password" id="password" name="password" required placeholder="Enter your password">
+                </div>
+                
+                <button type="submit" class="login-btn">🚀 Login</button>
+            </form>
+            <form id="signup-form" style="display: none;">
+                <div class="form-group">
+                    <label for="signup-username">👤 Username</label>
+                    <input type="text" id="signup-username" name="username" required placeholder="Choose a username">
+                </div>
+                
+                <div class="form-group">
+                    <label for="signup-email">📧 Email</label>
+                    <input type="email" id="signup-email" name="email" required placeholder="Enter your email">
+                </div>
+                
+                <div class="form-group">
+                    <label for="signup-password">🔒 Password</label>
+                    <input type="password" id="signup-password" name="password" required placeholder="Choose a password">
+                </div>
+                
+                <button type="submit" class="login-btn">📝 Sign Up</button>
+            </form>
+            <div class="login-footer">
+                <p>Forgot your password? <a href="#">Reset here</a></p>
+                <p>Don't have an account? <a href="#">Sign up</a></p>
+            </div>
+        </div>
+    </main>
+    <script>
+        let loginType = 'customer-login'; // default
+
+        document.getElementById('customer-login-btn').addEventListener('click', function() {
+            loginType = 'customer-login';
+            this.classList.add('active');
+            document.getElementById('customer-signup-btn').classList.remove('active');
+            document.getElementById('staff-login-btn').classList.remove('active');
+            document.getElementById('login-form').style.display = 'block';
+            document.getElementById('signup-form').style.display = 'none';
+        });
+
+        document.getElementById('customer-signup-btn').addEventListener('click', function() {
+            loginType = 'customer-signup';
+            this.classList.add('active');
+            document.getElementById('customer-login-btn').classList.remove('active');
+            document.getElementById('staff-login-btn').classList.remove('active');
+            document.getElementById('login-form').style.display = 'none';
+            document.getElementById('signup-form').style.display = 'block';
+        });
+
+        document.getElementById('staff-login-btn').addEventListener('click', function() {
+            loginType = 'staff';
+            this.classList.add('active');
+            document.getElementById('customer-login-btn').classList.remove('active');
+            document.getElementById('customer-signup-btn').classList.remove('active');
+            document.getElementById('login-form').style.display = 'block';
+            document.getElementById('signup-form').style.display = 'none';
+        });
+
+        document.getElementById('login-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+            
+            if (loginType === 'customer-login') {
+                // Customer login: check against stored accounts
+                const accounts = JSON.parse(localStorage.getItem('customerAccounts') || '[]');
+                const account = accounts.find(acc => acc.username === username && acc.password === password);
+                if (account) {
+                    alert('Customer login successful! Welcome, ' + username + '.');
+                    localStorage.setItem('customerLoggedIn', username);
+                    window.location.href = 'menu.html'; // Redirect to menu
+                } else {
+                    alert('Invalid username or password.');
+                }
+            } else if (loginType === 'staff') {
+                // Staff/Admin login
+                if (username === 'alvin' && password === '12345678') {
+                    alert('Staff login successful! Welcome, Alvin.');
+                    window.location.href = 'admin.html'; // Redirect to admin dashboard
+                } else {
+                    alert('Invalid staff credentials.');
+                }
+            }
+        });
+
+        document.getElementById('signup-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const username = document.getElementById('signup-username').value;
+            const email = document.getElementById('signup-email').value;
+            const password = document.getElementById('signup-password').value;
+            
+            // Check if username already exists
+            const accounts = JSON.parse(localStorage.getItem('customerAccounts') || '[]');
+            if (accounts.find(acc => acc.username === username)) {
+                alert('Username already exists. Please choose another.');
+                return;
+            }
+            
+            // Add new account
+            accounts.push({ username, email, password });
+            localStorage.setItem('customerAccounts', JSON.stringify(accounts));
+            alert('Account created successfully! You can now log in.');
+            // Switch to login
+            document.getElementById('customer-login-btn').click();
+        });
+
+        function toggleMenu() {
+            const navLinks = document.getElementById('nav-links');
+            navLinks.classList.toggle('active');
+            const hamburger = document.querySelector('.hamburger');
+            if (hamburger) hamburger.classList.toggle('active');
+        }
+    </script>
+    <p>&copy; Made and programmed by ROSEAN-X.</p>
+</body>
+</html>
